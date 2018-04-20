@@ -1,0 +1,17 @@
+*.audit_file_dest='/opt/app/oracle/admin/jar/adump'
+*.audit_trail='db'
+*.compatible='12.1.0.2.0'
+*.control_files='/opt/app/oracle/jar/redo1/control.ctl','/opt/app/oracle/jar/redo2/control.ctl'
+*.db_block_size=8192
+*.db_domain='yaocm.id.au'
+*.db_name='jar'
+*.db_recovery_file_dest='/opt/app/oracle/jar/fast_recovery_area'
+*.db_recovery_file_dest_size=4560m
+*.diagnostic_dest='/opt/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=jarXDB)'
+*.memory_target=1470m
+*.open_cursors=300
+*.processes=300
+*.remote_login_passwordfile='EXCLUSIVE'
+*.undo_tablespace='UNDOTBS1'
+*.enable_pluggable_database=TRUE

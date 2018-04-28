@@ -14,3 +14,7 @@ execute dbms_tts.transport_set_check('DEMO', TRUE)
 -- To see if there were any violations, run the following query
 -- -----------------------------------------------------------------------------
 select * from transport_set_violations;
+-- -----------------------------------------------------------------------------
+-- exit
+-- -----------------------------------------------------------------------------
+exit

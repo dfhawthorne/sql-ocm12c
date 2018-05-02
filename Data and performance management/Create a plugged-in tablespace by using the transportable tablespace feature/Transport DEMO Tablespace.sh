@@ -5,14 +5,24 @@
 #     Create a plugged-in tablespace by using the transportable tablespace
 #         feature
 #
-# Transport DEMO Tablespace
+# Transport DEMO Tablespace from PERSONAL database to JAR database on the same
+#   host.
+#
+# There is only enough memory to run one (1) database instance at a time.
+#
+# Parameters:
+#   1: password for SYSTEM on JAR database
 # ------------------------------------------------------------------------------
-# Set up Oracle environment
+# Set up Oracle environment for PERSONAL Database instance (non-CDB)
 # ------------------------------------------------------------------------------
 export ORAENV_ASK=NO
 export ORACLE_SID=personal
 . oraenv
 export NLS_DATE_FORMAT="YYYY/MM/DD HH24:MI:SS"
+# ------------------------------------------------------------------------------
+# List information from PERSONAL database
+# ------------------------------------------------------------------------------
+sqlplus / as sysdba @"list_demo_ts.sql"
 # ------------------------------------------------------------------------------
 # Perform Transport Tablespace Check
 # ------------------------------------------------------------------------------
@@ -20,10 +30,71 @@ sqlplus / as sysdba @"Check Transport Set is Self Contained.sql"
 # ------------------------------------------------------------------------------
 # Create directories for transport tablespaces
 # ------------------------------------------------------------------------------
-mkdir -p /opt/app/oracle/oradata/transport
+transport_dir=/opt/app/oracle/oradata/transport
+mkdir -p ${transport_dir}
+rm -f ${transport_dir}/*
 mkdir -p /opt/app/oracle/oradata/auxdata
 # ------------------------------------------------------------------------------
 # Use RMAN to create transport tablespace set
 # ------------------------------------------------------------------------------
 rman target / nocatalog log=transport_demo.log append \
     cmdfile="Create_Transport_Set_for_DEMO.rcv"
+# ------------------------------------------------------------------------------
+# Shut down PERSONAL database instance
+# ------------------------------------------------------------------------------
+sqlplus / as sysdba <<DONE
+SHUTDOWN IMMEDIATE
+EXIT
+DONE
+# ------------------------------------------------------------------------------
+# Set up Oracle environment for JAR CDB
+# ------------------------------------------------------------------------------
+export ORAENV_ASK=NO
+export ORACLE_SID=jar
+. oraenv
+# ------------------------------------------------------------------------------
+# Start up JAR database instance and create directory in PLUM PDB
+# ------------------------------------------------------------------------------
+sqlplus / as sysdba <<DONE
+STARTUP
+ALTER SESSION SET container=plum;
+CREATE OR REPLACE DIRECTORY transport_dir AS '${transport_dir}';
+exit
+DONE
+# ------------------------------------------------------------------------------
+# Import DEMO tablespace into the PLUM PDB in the JAR database
+#   This is a very simple example with only one (1) each of dump file, amd
+#   transport datafile.
+# ------------------------------------------------------------------------------
+ts_file=$(ls ${transport_dir}/*.dbf)
+dmp_file=$(basename $(ls ${transport_dir}/*.dmp))
+impdp system/$1@plum directory=transport_dir dumpfile=${dmp_file} \
+    transport_datafiles=${ts_file} 
+# ------------------------------------------------------------------------------
+# List information from PLUM PDB in JAR database
+# ------------------------------------------------------------------------------
+sqlplus / as sysdba <<DONE
+ALTER SESSION SET container=plum;
+@"list_demo_ts.sql"
+EXIT
+DONE
+# ------------------------------------------------------------------------------
+# Shut down JAR database instance
+# ------------------------------------------------------------------------------
+sqlplus / as sysdba <<DONE
+SHUTDOWN IMMEDIATE
+EXIT
+DONE
+# ------------------------------------------------------------------------------
+# Set up Oracle environment for PERSONAL Database instance (non-CDB)
+# ------------------------------------------------------------------------------
+export ORAENV_ASK=NO
+export ORACLE_SID=personal
+. oraenv
+# ------------------------------------------------------------------------------
+# Start up PERSONAL database instance
+# ------------------------------------------------------------------------------
+sqlplus / as sysdba <<DONE
+STARTUP
+EXIT
+DONE

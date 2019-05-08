@@ -9,7 +9,6 @@
 # Environment variables
 # ------------------------------------------------------------------------------
 
-REMOTE_DB_ALIAS=botany_dg
 REMOTE_DB_NAME=ocm12_botany
 LOCAL_DB_NAME=ocm12
 SYS_PW=$(cat .pw)
@@ -26,13 +25,23 @@ echo ${primary_status} | \
 printf "${primary_status}\n"
 
 # ------------------------------------------------------------------------------
+# Get the static connection string for the standby database from the Data Guard
+#   property called 'StaticConnectIdentifier' and make it a shell variable
+# ------------------------------------------------------------------------------
+
+eval $( \
+    dgmgrl -silent / "show database ${REMOTE_DB_NAME} StaticConnectIdentifier" | \
+    sed -ne 's/  \(.*\) = \(.*\)/\1=\2/p' \
+    )
+
+# ------------------------------------------------------------------------------
 # Start up remote physical standby, if needed
 # ------------------------------------------------------------------------------
 
 standby_status=$(dgmgrl -silent / "show database ${REMOTE_DB_NAME} status")
 echo ${standby_status} | \
     grep -qi "status = SHUTDOWN" && \
-    standby_status=$(dgmgrl -silent sys/${SYS_PW}@${REMOTE_DB_ALIAS} "startup mount")
+    standby_status=$(dgmgrl -silent sys/${SYS_PW}@${StaticConnectIdentifier} "startup mount")
     
 printf "${standby_status}\n"
 

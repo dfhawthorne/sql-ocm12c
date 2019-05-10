@@ -14,6 +14,9 @@ run_sql_cmd() ## DESCRIPTION: Runs a SQL*Plus command against the local database
               ## USAGE: run_sql_cmd "SELECT * FROM DUAL;"
               ## RETURNS:     Results of execution
   sqlplus -L -S / as sysdba <<-DONE
+  SET HEADING OFF
+  WHENEVER SQLERROR EXIT SQL.SQLCODE
+  WHENEVER OSERROR EXIT FAILURE
   $* 
   EXIT
 DONE
@@ -21,6 +24,27 @@ DONE
   return $?
 }
 
-r=$(run_sql_cmd "SELECT status FROM V\$DATABASE\;" )
-echo $r
-# TODO: Check for "ORA-01034: ORACLE not available"
+# ------------------------------------------------------------------------------
+# Ensure database is open
+# -----------------------------------------------------------------------------
+
+ensure_db_is_open()
+{
+  db_status=$(run_sql_cmd "SELECT status FROM V\$INSTANCE;" )
+  case ${db_status} in
+    *"ORA-01034: ORACLE not available"*)
+      run_sql_cmd "STARTUP";;
+    *"STARTED"*)
+      run_sql_cmd "ALTER DATABASE MOUNT;"
+      run_sql_cmd "ALTER DATABASE OPEN;";;
+    *"MOUNTED"*)
+      run_sql_cmd "ALTER DATABASE OPEN;";;
+    *"OPEN"*)
+      ;;
+    *)
+      echo "$db_status"
+      exit 1;;
+  esac
+}
+
+ensure_db_is_open

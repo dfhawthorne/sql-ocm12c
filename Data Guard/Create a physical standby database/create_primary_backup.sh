@@ -132,18 +132,18 @@ create_standby_control_file()
 update_tnsnames_file()
 {
   local tnsnames_file=${ORACLE_HOME}/network/admin/tnsnames.ora
+
   if [ -w ${tnsnames_file} ]
-  then {
-    if [ ! grep -qe "^botany_dg" ${tnsnames_file} ]
-    then cat >>${tnsnames_file} <<DONE
+  then
+    grep -qe "^botany_dg" ${tnsnames_file}  || \
+      cat >>${tnsnames_file} <<DONE
 botany_dg = (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=ocm12_botany_DGMGRL.yaocm.id.au)(INSTANCE_NAME=ocm12)(SERVER=DEDICATED))(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.111)(PORT=1521)))
 DONE
-    fi
-    if [ ! grep -qe "^padstow_dg" ${tnsnames_file} ]
-    then cat >>${tnsnames_file} <<DONE
+
+    grep -qe "^padstow_dg" ${tnsnames_file} || \
+      cat >>${tnsnames_file} <<DONE
 padstow_dg = (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=ocm12_padstow_DGMGRL.yaocm.id.au)(INSTANCE_NAME=ocm12)(SERVER=DEDICATED))(ADDRESS=(PROTOCOL=TCP)(HOST=padstow)(PORT=1521)))
 DONE
-    fi
   fi
 }
 
@@ -157,10 +157,14 @@ DONE
 
 transfer_files_to_standby()
 {
-  tar cvzf /tmp/padstow.gz /tmp/OCM12PRI_PADSTOW
-  scp /tmp/botany.ctl botany:/tmp
-  scp /tmp/initbotany.ora botany:/tmp
-  scp /tmp/padstow.gz botany:/tmp
+  [ -d /tmp/OCM12_PADSTOW ]  && \
+    tar cvzf /tmp/padstow.gz /tmp/OCM12_PADSTOW
+  [ -r /tmp/botany.ctl ]     && \
+    scp /tmp/botany.ctl botany:/tmp
+  [ -r /tmp/initbotany.ora ] && \
+    scp /tmp/initbotany.ora botany:/tmp
+  [ -r /tmp/padstow.gz ]     && \
+    scp /tmp/padstow.gz botany:/tmp
   scp /opt/app/oracle/product/12.1.0/dbhome_1/dbs/orapwocm12 botany:/opt/app/oracle/product/12.1.0/dbhome_1/dbs
 }
 

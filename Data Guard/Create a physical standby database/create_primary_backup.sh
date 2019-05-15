@@ -131,6 +131,20 @@ create_standby_control_file()
 
 update_tnsnames_file()
 {
+  local tnsnames_file=${ORACLE_HOME}/network/admin/tnsnames.ora
+  if [ -w ${tnsnames_file} ]
+  then {
+    if [ ! grep -qe "^botany_dg" ${tnsnames_file} ]
+    then cat >>${tnsnames_file} <<DONE
+botany_dg = (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=ocm12_botany_DGMGRL.yaocm.id.au)(INSTANCE_NAME=ocm12)(SERVER=DEDICATED))(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.111)(PORT=1521)))
+DONE
+    fi
+    if [ ! grep -qe "^padstow_dg" ${tnsnames_file} ]
+    then cat >>${tnsnames_file} <<DONE
+padstow_dg = (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=ocm12_padstow_DGMGRL.yaocm.id.au)(INSTANCE_NAME=ocm12)(SERVER=DEDICATED))(ADDRESS=(PROTOCOL=TCP)(HOST=padstow)(PORT=1521)))
+DONE
+    fi
+  fi
 }
 
 # ------------------------------------------------------------------------------

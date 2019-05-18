@@ -106,6 +106,13 @@ DONE
 create_backup_parameter_file()
 {
   run_sql_cmd "CREATE PFILE='/tmp/initpadstow.ora' FROM SPFILE;"
+  sed                                             \
+    -e '/^ocm12\.__/d'                            \
+    -e '/&\*\.control_files=/d'                   \
+    -e '/^\*\.fal_server=/s/botany/padstow/g'     \
+    -e '/^\*\.db_unique_name=/s/padstow/botany/g' \
+    /tmp/initpadstow.ora \
+    >/tmp/initbotany.ora
 }
 
 # ------------------------------------------------------------------------------

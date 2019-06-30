@@ -37,7 +37,7 @@ BEGIN
       AND rownum            = 1;
       EXECUTE immediate 'CREATE BIGFILE TABLESPACE ' || c_req_ts_name ||
         ' DATAFILE ''' || l_db_dir || c_req_ts_name || 
-        '01.dbf'' SIZE 500M AUTOEXTEND ON NEXT 5M';
+        '01.dbf''v SIZE 500M AUTOEXTEND ON NEXT 5M';
     END IF;
   END;
 END;

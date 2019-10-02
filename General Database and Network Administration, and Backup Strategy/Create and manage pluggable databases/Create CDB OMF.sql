@@ -5,8 +5,8 @@
 --       Create CDB OMF
 -- -----------------------------------------------------------------------------
 create database jar
-  user sys identified by "&pw_sys"
-  user system identified by "&pw_system"
+  user sys identified by "&&pw_sys"
+  user system identified by "&&pw_system"
   logfile group 1 size 50m,
           group 2 size 50m,
           group 3 size 50m

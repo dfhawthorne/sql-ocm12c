@@ -12,7 +12,7 @@ create database jar
           group 3 size 50m
   character set al32utf8 national character set al16utf16
   set default bigfile tablespace
-  archivelog
+  noarchivelog
   set time_zone='+10:00'
   extent management local
   default temporary tablespace temp

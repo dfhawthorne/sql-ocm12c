@@ -7,9 +7,9 @@
 create database jar
   user sys identified by "&&pw_sys"
   user system identified by "&&pw_system"
-  logfile group 1 size 50m,
-          group 2 size 50m,
-          group 3 size 50m
+  logfile group 1 size 200m,
+          group 2 size 200m,
+          group 3 size 200m
   character set al32utf8 national character set al16utf16
   set default bigfile tablespace
   noarchivelog

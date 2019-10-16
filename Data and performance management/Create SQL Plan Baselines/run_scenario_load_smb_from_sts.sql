@@ -30,9 +30,24 @@ ALTER SESSION SET CURRENT_SCHEMA=sh;
 
 -- Display Summary of SQL Tuning Sets
 
+SET HEADING ON
+
+PROMPT Display Summary of SQL Tuning Sets
 COLUMN NAME FORMAT a20
 COLUMN COUNT FORMAT 99999
 COLUMN DESCRIPTION FORMAT a30
 
 SELECT NAME, STATEMENT_COUNT AS "SQLCNT", DESCRIPTION
 FROM   DBA_SQLSET;
+
+-- Display Contents of SMB
+
+PROMPT Display Contents of SMB
+COLUMN sql_handle FORMAT A20
+COLUMN plan_name  FORMAT A30
+
+SELECT
+    sql_handle,
+    plan_name
+  FROM
+    dba_sql_plan_baselines;

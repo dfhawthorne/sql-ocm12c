@@ -50,7 +50,6 @@ BEGIN
   -- Load STS into SMB
   l_plan_cnt := DBMS_SPM.LOAD_PLANS_FROM_SQLSET(
     sqlset_name  => c_tuning_set_name,
-    basic_filter => 'sql_text like ''SELECT /* q1_group_by */%''',
     sqlset_owner => l_owner
   );
   -- Drop STS

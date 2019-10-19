@@ -8,7 +8,8 @@
 -- (2) No need for file name conversion because I am using OMF in JAR
 -- -----------------------------------------------------------------------------
 ALTER SESSION SET container = cdb$root;
-ALTER PLUGGABLE DATABASE jam CLOSE;
-ALTER PLUGGABLE DATABASE jam OPEN READ ONLY;
-CREATE PLUGGABLE DATABASE vegemite FROM jam;
+ALTER PLUGGABLE DATABASE plum CLOSE;
+ALTER PLUGGABLE DATABASE plum OPEN READ ONLY;
+CREATE PLUGGABLE DATABASE vegemite FROM plum; 
 ALTER PLUGGABLE DATABASE vegemite OPEN;
+ALTER PLUGGABLE DATABASE vegemite SAVE STATE;

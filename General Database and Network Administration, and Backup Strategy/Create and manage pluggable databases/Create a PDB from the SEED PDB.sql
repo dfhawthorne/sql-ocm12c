@@ -9,4 +9,7 @@
 ALTER SESSION SET container = cdb$root;
 CREATE PLUGGABLE DATABASE plum ADMIN USER plummer IDENTIFIED BY "Christopher";
 ALTER PLUGGABLE DATABASE plum OPEN READ WRITE;
+CONNECT system/"&pw_system"
+alter session set container=plum;
+@?/sqlplus/admin/pupbld.sql
 CONNECT plummer/Christopher@localhost/plum.yaocm.id.au

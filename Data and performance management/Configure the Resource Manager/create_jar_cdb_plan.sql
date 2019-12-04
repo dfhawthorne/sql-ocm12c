@@ -53,7 +53,7 @@ END;
 BEGIN
   DBMS_RESOURCE_MANAGER.CREATE_CDB_PLAN_DIRECTIVE(
     plan                  => 'jar_cdb_plan', 
-    pluggable_database    => 'VEGENITE', 
+    pluggable_database    => 'VEGEMITE', 
     shares                => 1, 
     utilization_limit     => 70,
     parallel_server_limit => 70);

@@ -3,7 +3,11 @@
 -- <a href="https://docs.oracle.com/database/121/ADMIN/cdb_dbrm.htm#ADMIN-GUID-36E58D2B-2873-4ED1-B042-624DB42A5C8E">44.3.1 Creating a CDB Resource Plan: A Scenario</a>
 -- -----------------------------------------------------------------------------------------------------------------------------
 
-SET ECHO ON
+-- SET ECHO ON
+
+PROMPT Disable CDB Plan
+
+ALTER SYSTEM SET resource_manager_plan='ORA$INTERNAL_CDB_PLAN' SCOPE=BOTH;
 
 PROMPT Drop resource plan
 
@@ -70,3 +74,6 @@ PROMPT Submit the pending area using the SUBMIT_PENDING_AREA procedure:
 
 exec DBMS_RESOURCE_MANAGER.SUBMIT_PENDING_AREA();
 
+PROMPT Enable CDB Plan
+
+ALTER SYSTEM SET resource_manager_plan='JAR_CDB_PLAN' SCOPE=BOTH;

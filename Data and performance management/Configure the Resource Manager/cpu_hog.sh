@@ -6,10 +6,6 @@
 export ORAENV_ASK=NO
 export ORACLE_SID=jar
 . oraenv
-sqlplus / as sysdba <<DONE
-alter session set container=$1;
-select sum( dbms_random.value() ) from dual connect by level < 1000000;
-EXIT
-DONE
+sqlplus / as sysdba @cpu_hog.sql $1 100
 
 exit 0

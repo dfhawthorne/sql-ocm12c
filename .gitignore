@@ -1,2 +1,4 @@
 *.log
 *.lst
+test.sh
+test.sql

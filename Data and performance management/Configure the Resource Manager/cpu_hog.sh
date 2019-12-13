@@ -3,7 +3,7 @@
 # Simple CPU Hog script
 # - Requires cpu_hog.sql script
 # - Parameters:
-#    1: Container Name with JAR CDB
+#    1: Container Name within JAR CDB
 #    2: Number of iterations of CPU Intensive SQL statement (defaults to 10)
 # ------------------------------------------------------------------------------
 

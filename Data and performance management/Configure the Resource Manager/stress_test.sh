@@ -16,13 +16,13 @@ while getopts "b:hi:l:o:p:s:v" opt
 do case ${opt} in
     b) baseline_name=${OPTARG};;
     h) show_help=0;;
-    i) iterations=${OPT_ARG};;
-    l) awr_interval=${OPT_ARG};;
+    i) iterations=${OPTARG};;
+    l) awr_interval=${OPTARG};;
     o) awr_file_name=${OPTARG};;
     p) resource_plan=${OPTARG};;
-    s) sleep_interval=${OPT_ARG};;
+    s) sleep_interval=${OPTARG};;
     v) verbose=$(( verbose + 1 ));;
-    *) printf "Invalid arg: opt='%s', OPTARG='%s', OPTIND=%d\n" ${opt} ${OPTARG} ${OPTIND};;
+    *) printf "Invalid arg: opt=%q, OPTARG=%q, OPTIND=%d\n" ${opt} ${OPTARG} ${OPTIND};;
   esac
 done
 
@@ -89,8 +89,8 @@ printf -v old_snap_interval "%d" ${raw_old_snap_interval}
 
 if [ ${verbose} -gt 0 ]
 then
-  printf "Old values: plan=%s, snap_interval=%d\n" ${old_plan_name} ${old_snap_interval}
-  printf "New values: plan=%s, snap_interval=%d\n" ${new_plan_name} ${new_snap_interval}
+  printf "Old values: plan=%q, snap_interval=%d\n" ${old_plan_name} ${old_snap_interval}
+  printf "New values: plan=%q, snap_interval=%d\n" ${new_plan_name} ${new_snap_interval}
 fi
 
 # ------------------------------------------------------------------------------
@@ -100,10 +100,10 @@ fi
 if [ "${new_plan_name}" != "${old_plan_name}" ]
 then
   if [ ${verbose} -gt 0 ]
-  then printf "Setting resource manager plan for CDB to '%s'...\n" "${new_plan_name}"
+  then printf "Setting resource manager plan for CDB to '%q'...\n" "${new_plan_name}"
   fi
 
-  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%s';" "${new_plan_name}"
+  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%q';" "${new_plan_name}"
   output1=$(sqlplus -S / as sysdba <<DONE
 ${sql_cmd}
 EXIT
@@ -218,10 +218,10 @@ fi
 if [ "${new_plan_name}" != "${old_plan_name}" ]
 then
   if [ ${verbose} -gt 0 ]
-  then printf "Setting resource plan to '%s'\n" "${old_plan_name}"
+  then printf "Setting resource plan to '%q'\n" "${old_plan_name}"
   fi
 
-  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%s';" "${old_plan_name}"
+  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%q';" "${old_plan_name}"
   output3=$(sqlplus -S / as sysdba <<DONE
 ${sql_cmd}
 EXIT
@@ -236,7 +236,7 @@ fi
 if [ ${new_snap_interval} -ne ${old_snap_interval} ]
 then
   if [ ${verbose} -gt 0 ]
-  then printf "Setting AWR snapshot interval to '%s'\n" "${old_snap_interval}"
+  then printf "Setting AWR snapshot interval to '%q'\n" "${old_snap_interval}"
   fi
 
 output4=$(sqlplus -S / as sysdba <<DONE

@@ -1,9 +1,54 @@
 #!/bin/bash -x
 # ------------------------------------------------------------------------------
 # Stress test all PDBs using CPU hog script
-# - Parameters:
-#     1: CDB resource plan to be tested (defaults to internal plan)
-#     2: File name for AWR report, if required.
+#
+# ./stress_test.sh [-b base_line]
+#                  [-i num_iterations]
+#                  [-l temp_awr_snapshot_interval]
+#                  [-o awr_report]
+#                  [-p resource_plan]
+#                  [-s job_check_interval]
+#                  [-v]
+# stress_test.sh -h
+#
+# Description:
+#
+#     This script performs a CPU stress test on a preset list of PDBs in the
+#     JAR CDB for a given CDB resource plan.
+#
+#     The AWR snapshots are done automatically and can be used to create an AWR
+#     report and/or an AWR baseline, if required.
+#
+# Options:
+#
+# -h:
+#     Shows this help and exit.
+#
+# -b:
+#     Name of AWR workload baseline to be created based on the snapshots created
+#     in this stress test.
+#
+# -i:
+#     Number of iterations of CPU hog SQL statement. Default is ten (10).
+#
+# -l:
+#     Long AWR Snapshot interval - used to enable AWR snapshots without doing
+#     any unexpected snapshots. Default is 120 minutes.
+#
+# -o:
+#     Name of file for an AWR workload report (in HTML format) to be created
+#     based on the snapshots created in this stress test.
+#
+# -p:
+#     Name of Oracle Resource Manager CDB Plan to be used in this stress test.
+#     The default value is 'ORA$INTERNAL_CDB_PLAN'.
+#
+# -s:
+#     Sleep interval between checking for completion of jobs. Default is 60
+#     seconds.
+#
+# -v:
+#     Enable verbose mode.
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

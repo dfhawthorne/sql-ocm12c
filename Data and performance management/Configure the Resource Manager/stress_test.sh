@@ -7,6 +7,33 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
+# Interpret command line options
+# ------------------------------------------------------------------------------
+
+while getopts "b:ho:p:" opt
+do case ${opt} in
+    "b") baseline_name=${OPTARG};;
+    "h") show_help=0;;
+    "o") awr_file_name=${OPTARG};;
+    "p") resource_plan=${OPTARG};;
+  esac
+done
+
+if [ ${show_help} ]
+then printf "%s [-b base_line] [-o awr_report] [-p resource_plan]\n" ${0}
+  printf "%s -h\n" ${0}
+  printf "\nDescription:\n\n\tThis script performs a CPU stress test on a preset list of PDBs in the JAR CDB for a given CDB resource plan.\n\n"
+  printf "\tThe AWR snapshots are done automatically and can be used to create an AWR report and/or an AWR baseline, if required.\n\n"
+  printf "Options:\n\n"
+  printf "%s:\n\tShows this help and exit.\n\n" "-h"
+  printf "%s:\n\tName of AWR workload baseline to be created based on the snapshots created in this stress test.\n\n" "-b"
+  printf "%s:\n\tName of file for an AWR workload report (in HTML format) to be created based on the snapshots created in this stress test.\n\n" "-o"
+  printf "%s:\n\tName of Oracle Resource Manager CDB Plan to be used in this stress test. The default value is 'ORA\$INTERNAL_CDB_PLAN'.\n\n" "-p"
+  exit 0
+fi
+
+
+# ------------------------------------------------------------------------------
 # Set the environment for connection to the JAR CDB
 # ------------------------------------------------------------------------------
 
@@ -24,7 +51,7 @@ export ORACLE_SID=jar
 #   granualartity to the AWR reports.
 # ------------------------------------------------------------------------------
 
-new_plan_name="${1:-ORA\$INTERNAL_CDB_PLAN}"
+new_plan_name="${resource_plan:-ORA\$INTERNAL_CDB_PLAN}"
 new_snap_interval=120
 job_check_interval=60
 
@@ -58,7 +85,7 @@ printf "New values: plan=%s, snap_interval=%d\n" ${new_plan_name} ${new_snap_int
 if [ "${new_plan_name}" != "${old_plan_name}" ]
 then
 sqlplus -S / as sysdba <<DONE
-ALTER SYSTEM SET resource_manager_plan="${new_plan_name}";
+ALTER SYSTEM SET resource_manager_plan='${new_plan_name}';
 EXIT
 DONE
 fi
@@ -129,7 +156,7 @@ printf "End snapshot ID=%d\n" ${end_snap_id}
 if [ "${new_plan_name}" != "${old_plan_name}" ]
 then
 sqlplus -S / as sysdba <<DONE
-ALTER SYSTEM SET resource_manager_plan="${old_plan_name}";
+ALTER SYSTEM SET resource_manager_plan='${old_plan_name}';
 EXIT
 DONE
 fi
@@ -146,9 +173,9 @@ fi
 # Produce an AWR Report if a file name is provided
 # ------------------------------------------------------------------------------
 
-if [ ! -z "${2}" ]
+if [ ! -z "${awr_file_name}" ]
 then
-sqlplus -S / as sysdba >${2} <<DONE
+sqlplus -S / as sysdba >${awr_file_name} <<DONE
 SET PAGESIZE 0 LINESIZE 1500 FEEDBACK OFF HEADING OFF VERIFY OFF
 column dbid noprint new_value dbid
 column instance_number noprint new_value instance_number
@@ -164,5 +191,18 @@ select * from
 EXIT
 DONE
 fi
+
+# ------------------------------------------------------------------------------
+# Create an AWR Baseline, if required
+# ------------------------------------------------------------------------------
+
+if [ ! -z "${baseline_name}" ]
+then
+sqlplus -S / as sysdba <<DONE
+EXEC DBMS_WORKLOAD_REPOSITORY.CREATE_BASELINE(${start_snap_id},${end_snap_id},'${baseline_name}');
+EXIT
+DONE
+fi
+
 
 exit 0

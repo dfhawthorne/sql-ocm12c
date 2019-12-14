@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # ------------------------------------------------------------------------------
 # Stress test all PDBs using CPU hog script
 #
@@ -106,7 +106,7 @@ export ORACLE_SID=jar
 #   granualartity to the AWR reports.
 # ------------------------------------------------------------------------------
 
-new_plan_name="${resource_plan:-ORA\$INTERNAL_CDB_PLAN}"
+printf -v new_plan_name "%s" ${resource_plan:-ORA\$INTERNAL_CDB_PLAN}
 new_snap_interval=${awr_interval:-120}
 job_check_interval=${sleep_interval:-60}
 num_iterations=${iterations:-10}
@@ -129,7 +129,7 @@ EXIT
 DONE
 )
 
-printf -v old_plan_name "%q" ${raw_old_plan_name}
+printf -v old_plan_name     "%s" ${raw_old_plan_name}
 printf -v old_snap_interval "%d" ${raw_old_snap_interval}
 
 if [ ${verbose} -gt 0 ]
@@ -145,10 +145,10 @@ fi
 if [ "${new_plan_name}" != "${old_plan_name}" ]
 then
   if [ ${verbose} -gt 0 ]
-  then printf "Setting resource manager plan for CDB to '%q'...\n" "${new_plan_name}"
+  then printf "Setting resource manager plan for CDB to '%s'...\n" ${new_plan_name}
   fi
 
-  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%q';" "${new_plan_name}"
+  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%s';" ${new_plan_name}
   output1=$(sqlplus -S / as sysdba <<DONE
 ${sql_cmd}
 EXIT
@@ -257,16 +257,20 @@ then printf "End snapshot ID=%d\n" ${end_snap_id}
 fi
 
 # ------------------------------------------------------------------------------
-# Restore the internal database environment after stress test
+# Restore the database environment after stress test.
+# Unless the scheduled maintenance window is in effect, then leave the
+# resource plan unchanged. The generated plan is not a valid name.
 # ------------------------------------------------------------------------------
+
+case ${old_plan_name} in SCHEDULER*) old_plan_name=${new_plan_name};; esac
 
 if [ "${new_plan_name}" != "${old_plan_name}" ]
 then
   if [ ${verbose} -gt 0 ]
-  then printf "Setting resource plan to '%q'\n" "${old_plan_name}"
+  then printf "Setting resource plan to '%s'\n" ${old_plan_name}
   fi
 
-  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%q';" "${old_plan_name}"
+  printf -v sql_cmd "ALTER SYSTEM SET resource_manager_plan='%s';" ${old_plan_name}
   output3=$(sqlplus -S / as sysdba <<DONE
 ${sql_cmd}
 EXIT
@@ -305,7 +309,7 @@ then
   then printf "Produce AWR report to '%s'\n" "${awr_file_name}"
   fi
 
-output5=$(sqlplus -S / as sysdba >${awr_file_name} <<DONE
+output5=$(sqlplus -S / as sysdba >"${awr_file_name}" <<DONE
 SET PAGESIZE 0 LINESIZE 1500 FEEDBACK OFF HEADING OFF VERIFY OFF
 column dbid noprint new_value dbid
 column instance_number noprint new_value instance_number

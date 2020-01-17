@@ -11,6 +11,8 @@
 [ ! -z "$2" ] && export ORACLE_HOME=$2
 
 ${ORACLE_HOME}/bin/sqlplus -S -L / as sysdba <<DONE
+WHENEVER SQLERROR EXIT SQL.SQLCODE
+
 SET FEEDBACK OFF HEADING OFF VERIFY OFF
 
 COLUMN name                   NOPRINT NEW_VALUE database_name

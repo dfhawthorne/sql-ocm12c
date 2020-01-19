@@ -13,7 +13,7 @@
 ${ORACLE_HOME}/bin/sqlplus -S -L / as sysdba <<DONE
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 
-SET FEEDBACK OFF HEADING OFF VERIFY OFF
+SET FEEDBACK OFF HEADING OFF VERIFY OFF LINESIZE 32767
 
 COLUMN name                   NOPRINT NEW_VALUE database_name
 COLUMN log_mode               NOPRINT NEW_VALUE log_mode
@@ -40,15 +40,32 @@ SELECT
   FROM 
     v\$database
 ;
-PROMPT database_name=&&database_name
-PROMPT log_mode=&&log_mode
-PROMPT open_mode=&&open_mode
-PROMPT protection_mode=&&protection_mode
-PROMPT database_role=&&database_role
-PROMPT dataguard_broker=&&dataguard_broker
-PROMPT guard_status=&&guard_status
-PROMPT db_unique_name=&&db_unique_name
-PROMPT primary_db_unique_name=&&primary_db_unique_name
-PROMPT force_logging=&&force_logging
+PROMPT database_name='&&database_name'
+PROMPT log_mode='&&log_mode'
+PROMPT open_mode='&&open_mode'
+PROMPT protection_mode='&&protection_mode'
+PROMPT database_role='&&database_role'
+PROMPT dataguard_broker='&&dataguard_broker'
+PROMPT guard_status='&&guard_status'
+PROMPT db_unique_name='&&db_unique_name'
+PROMPT primary_db_unique_name='&&primary_db_unique_name'
+PROMPT force_logging='&&force_logging'
+
+SELECT
+    name || '=''' || value || ''''
+  FROM
+    v\$parameter
+  WHERE
+    NAME IN (
+      'log_archive_config',
+      'log_archive_dest_1',
+      'log_archive_dest_2',
+      'remote_login_passwordfile',
+      'log_archive_format'
+    )
+  ORDER BY
+    name
+/
+
 EXIT
 DONE

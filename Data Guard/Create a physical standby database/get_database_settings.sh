@@ -61,7 +61,9 @@ SELECT
       'log_archive_dest_1',
       'log_archive_dest_2',
       'remote_login_passwordfile',
-      'log_archive_format'
+      'log_archive_format',
+      'fal_server',
+      'standby_file_management'
     )
   ORDER BY
     name

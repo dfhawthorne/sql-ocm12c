@@ -2,7 +2,6 @@ REM ====================================================================
 REM Display the status of Data Guard
 REM ====================================================================
 
-set heading off
 set feedback off
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 

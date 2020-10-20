@@ -7,10 +7,10 @@
 #   2: ORACLE_HOME
 # -------------------------------------------------------------------------------
 
-[ ! -z "$1" ] && export ORACLE_SID=$1
-[ ! -z "$2" ] && export ORACLE_HOME=$2
+[ -n "$1" ] && export ORACLE_SID=$1
+[ -n "$2" ] && export ORACLE_HOME=$2
 
-${ORACLE_HOME}/bin/sqlplus -S -L / as sysdba <<DONE
+"${ORACLE_HOME}"/bin/sqlplus -S -L / as sysdba <<DONE
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 
 SET FEEDBACK OFF HEADING OFF VERIFY OFF LINESIZE 32767

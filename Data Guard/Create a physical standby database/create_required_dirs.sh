@@ -42,6 +42,6 @@ fi
    
 for dir in $(printf "%s\n" "${req_dirs}" | sort -u)
 do
-  printf "%s\n" ${dir}
-  mkdir -p ${dir}
+  printf "%s\n" "${dir}"
+  mkdir -p "${dir}"
 done

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ------------------------------------------------------------------------------
 # Converts the Physical Standby database on BOTANY to a snapshot standby.
 #
@@ -18,11 +18,11 @@ SYS_PW=$(cat .pw)
 # ------------------------------------------------------------------------------
 
 primary_status=$(dgmgrl -silent / "show database ${LOCAL_DB_NAME} status")
-echo ${primary_status} | \
+echo "${primary_status}" | \
     grep -qi "ORA-01034" && \
     primary_status=$(dgmgrl -silent / "startup")
     
-printf "${primary_status}\n"
+printf "%s\n" "${primary_status}"
 
 # ------------------------------------------------------------------------------
 # Get the static connection string for the standby database from the Data Guard
@@ -39,11 +39,11 @@ eval $( \
 # ------------------------------------------------------------------------------
 
 standby_status=$(dgmgrl -silent / "show database ${REMOTE_DB_NAME} status")
-echo ${standby_status} | \
+echo "${standby_status}" | \
     grep -qi "status = SHUTDOWN" && \
-    standby_status=$(dgmgrl -silent sys/${SYS_PW}@${StaticConnectIdentifier} "startup mount")
+    standby_status=$(dgmgrl -silent sys/"${SYS_PW}"@"${StaticConnectIdentifier}" "startup mount")
     
-printf "${standby_status}\n"
+printf "%s\n" "${standby_status}"
 
 # ------------------------------------------------------------------------------
 # Convert remote physical standby to snapshot standby
@@ -51,4 +51,4 @@ printf "${standby_status}\n"
 
 snapshot_status=$(dgmgrl -silent / "convert database ${REMOTE_DB_NAME} to snapshot standby")
 
-printf "${snapshot_status}\n"
+printf "%s\n" "${snapshot_status}"

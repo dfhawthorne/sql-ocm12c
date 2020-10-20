@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ------------------------------------------------------------------------------
 # Creates the files necessary to create a physical standby database by backing
 # up the primary database.
@@ -140,15 +140,15 @@ update_tnsnames_file()
 {
   local tnsnames_file=${ORACLE_HOME}/network/admin/tnsnames.ora
 
-  if [ -w ${tnsnames_file} ]
+  if [ -w "${tnsnames_file}" ]
   then
-    grep -qe "^botany_dg" ${tnsnames_file}  || \
-      cat >>${tnsnames_file} <<DONE
+    grep -qe "^botany_dg" "${tnsnames_file}"  || \
+      cat >>"${tnsnames_file}" <<DONE
 botany_dg = (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=ocm12_botany_DGMGRL.yaocm.id.au)(INSTANCE_NAME=ocm12)(SERVER=DEDICATED))(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.111)(PORT=1521)))
 DONE
 
-    grep -qe "^padstow_dg" ${tnsnames_file} || \
-      cat >>${tnsnames_file} <<DONE
+    grep -qe "^padstow_dg" "${tnsnames_file}" || \
+      cat >>"${tnsnames_file}" <<DONE
 padstow_dg = (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=ocm12_padstow_DGMGRL.yaocm.id.au)(INSTANCE_NAME=ocm12)(SERVER=DEDICATED))(ADDRESS=(PROTOCOL=TCP)(HOST=padstow)(PORT=1521)))
 DONE
   fi

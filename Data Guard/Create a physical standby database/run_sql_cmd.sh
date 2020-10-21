@@ -11,7 +11,7 @@
 
 run_sql_cmd() 
 {
-  sqlplus -L -S / as sysdba <<-DONE
+  ${ORACLE_HOME}/bin/sqlplus -L -S / as sysdba <<-DONE
   SET HEADING OFF
   WHENEVER SQLERROR EXIT SQL.SQLCODE
   WHENEVER OSERROR EXIT FAILURE

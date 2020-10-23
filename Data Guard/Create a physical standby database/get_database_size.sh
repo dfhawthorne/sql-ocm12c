@@ -2,13 +2,19 @@
 # ------------------------------------------------------------------------------
 # Calculates the size of a database by adding up all data and temporary files.
 #   The size is given in GB.
-# ------------------------------------------------------------------------------
+#
+# Parameters:
+#   1: ORACLE_SID
+#   2: ORACLE_HOME
+# -------------------------------------------------------------------------------
 
-sqlplus -L -S / as sysdba <<DONE
-SET HEADING OFF
-SET FEEDBACK OFF
+[ -n "$1" ] && export ORACLE_SID=$1
+[ -n "$2" ] && export ORACLE_HOME=$2
+
+"${ORACLE_HOME}"/bin/sqlplus -S -L / as sysdba <<DONE
 WHENEVER SQLERROR EXIT SQL.SQLCODE
-WHENEVER OSERROR EXIT FAILURE
+
+SET FEEDBACK OFF HEADING OFF VERIFY OFF LINESIZE 32767
 
 SELECT
     (

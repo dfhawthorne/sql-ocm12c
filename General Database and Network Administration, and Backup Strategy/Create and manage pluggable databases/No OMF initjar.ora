@@ -9,7 +9,7 @@
 *.db_recovery_file_dest_size=4560m
 *.diagnostic_dest='/opt/app/oracle'
 *.dispatchers='(PROTOCOL=TCP) (SERVICE=jarXDB)'
-*.memory_target=1470m
+*.max_sga_size=1470m
 *.open_cursors=300
 *.processes=300
 *.remote_login_passwordfile='EXCLUSIVE'

@@ -12,7 +12,7 @@
 *.diagnostic_dest='/opt/app/oracle'
 *.dispatchers='(PROTOCOL=TCP) (SERVICE=jarXDB)'
 *.log_archive_dest_1='LOCATION=USE_DB_RECOVERY_FILE_DEST'
-*.memory_target=1470m
+*.sga_max_size=1470m
 *.open_cursors=300
 *.processes=300
 *.remote_login_passwordfile='EXCLUSIVE'

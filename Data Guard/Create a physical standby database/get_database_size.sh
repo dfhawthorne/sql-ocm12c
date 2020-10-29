@@ -17,7 +17,8 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE
 SET FEEDBACK OFF HEADING OFF VERIFY OFF LINESIZE 32767
 
 SELECT
-    (
+    CEIL(
+      (
         (SELECT
             SUM(bytes)
           FROM
@@ -28,7 +29,8 @@ SELECT
           FROM
             v\$tempfile
         )
-    )/1024/1024/1024 AS gb
+      )/1024/1024/1024
+    ) AS gb
   FROM
     dual
 ;
